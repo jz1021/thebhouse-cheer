@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE B HOUSE - 换乘恋爱</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:0.4}50%{opacity:1}}
+@keyframes popIn{from{opacity:0;transform:scale(0.9)}to{opacity:1;transform:scale(1)}}
+@keyframes nightIn{from{opacity:0;transform:scale(1.05)}to{opacity:1;transform:scale(1)}}
+body{background:#0a0a12;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"PingFang SC","Noto Serif SC",serif;padding:20px}
+.phone{width:380px;height:700px;background:#161820;border-radius:28px;padding:10px;box-shadow:0 16px 48px rgba(0,0,0,0.5);border:2px solid #22242c;position:relative}
+.screen{width:100%;height:100%;background:#0e0f16;border-radius:20px;overflow:hidden;position:relative}
+.view{position:absolute;inset:0;overflow-y:auto;background:#0e0f16;border-radius:20px;z-index:1;animation:fadeIn .35s ease}
+.day-title-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center}
+.day-num{font-size:56px;color:#d8ccb8;font-weight:300;letter-spacing:8px;animation:fadeUp .6s ease}
+.day-divider{width:40px;height:1px;background:rgba(200,170,130,0.4);margin:16px auto;animation:fadeUp .6s ease .1s both}
+.day-sub{font-size:10px;color:rgba(255,255,255,0.2);letter-spacing:3px;animation:fadeUp .6s ease .2s both}
+.day-tap{font-size:10px;color:rgba(255,255,255,0.12);letter-spacing:2px;margin-top:40px;animation:pulse 2s ease infinite}
+.night-wrap{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 20px;animation:nightIn .5s ease}
+.night-icon{font-size:48px;margin-bottom:20px}
+.night-title{font-size:16px;color:#d8ccb8;letter-spacing:4px;font-weight:300;margin-bottom:20px}
+.night-rules{font-size:11px;color:rgba(255,255,255,0.3);line-height:2.2;margin-bottom:24px;max-width:280px}
+.night-rules em{color:rgba(200,160,120,0.6);font-style:normal}
+.letter-page{min-height:100%;display:flex;flex-direction:column;padding:30px 24px}
+.letter-to{font-size:11px;color:rgba(200,170,130,0.6);letter-spacing:2px;margin-bottom:24px}
+.letter-body{flex:1;font-size:13px;color:rgba(255,255,255,0.55);line-height:2.2;letter-spacing:0.5px;white-space:pre-line}
+.letter-photo{width:100%;max-height:180px;object-fit:cover;border-radius:8px;margin:12px 0;opacity:0.85;border:1px solid rgba(255,255,255,0.06)}
+.letter-from{text-align:right;font-size:12px;color:rgba(255,255,255,0.3);margin-top:20px;letter-spacing:1px}
+.letter-actions{display:flex;gap:8px;justify-content:center;padding:16px 0 8px}
+.narr-wrap{min-height:100%;display:flex;flex-direction:column;justify-content:center;padding:40px 24px}
+.narr-scene{font-size:10px;color:rgba(200,170,130,0.4);letter-spacing:2px;margin-bottom:16px;text-align:center}
+.narr-text{font-size:13px;color:rgba(255,255,255,0.5);line-height:2.1;letter-spacing:0.4px;text-align:center;max-width:320px;align-self:center}
+.narr-text em{color:rgba(200,160,120,0.7);font-style:normal}
+.choices-wrap{padding:16px 0 0;display:flex;flex-direction:column;gap:8px;align-self:center;width:100%;max-width:320px}
+.choice-btn{padding:12px 16px;border-radius:10px;border:1px solid rgba(255,255,255,0.08);font-size:12px;color:rgba(255,255,255,0.4);text-align:center;letter-spacing:0.4px;cursor:pointer;transition:.2s;background:rgba(255,255,255,0.02);line-height:1.5}
+.choice-btn:hover{border-color:rgba(180,150,110,0.4);color:rgba(255,255,255,0.65)}
+.choice-btn.pick{border-color:rgba(180,150,110,0.5);background:rgba(180,150,110,0.08);color:#c8a870}
+.tap-hint{text-align:center;font-size:10px;color:rgba(255,255,255,0.12);letter-spacing:2px;padding:16px 0;cursor:pointer;margin-top:8px}
+.react-wrap{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;text-align:center}
+.react-icon{font-size:36px;margin-bottom:16px;animation:popIn .3s ease}
+.react-text{font-size:13px;color:rgba(255,255,255,0.5);line-height:2;max-width:280px;margin-bottom:24px}
+.react-aff{font-size:11px;color:rgba(200,170,130,0.5);line-height:1.8;margin-bottom:8px}
+.react-aff .up{color:#8ab4a0}.react-aff .down{color:#c08080}.react-aff .same{color:rgba(255,255,255,0.2)}
+.sms-top{padding:14px 16px;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;gap:8px}
+.sms-top .title-sms{font-size:12px;color:rgba(255,255,255,0.4);letter-spacing:1px}
+.sms-top .badge-sms{margin-left:auto;font-size:9px;padding:3px 8px;border-radius:8px;background:rgba(180,150,100,0.12);color:rgba(200,170,130,0.5)}
+.sms-log{flex:1;padding:16px 14px;overflow-y:auto;display:flex;flex-direction:column;gap:10px}
+.sms-sys{font-size:9px;color:rgba(255,255,255,0.13);letter-spacing:2px;padding:3px 10px;text-align:center}
+.sms-time{font-size:9px;color:rgba(255,255,255,0.08);text-align:center}
+.sms-bub{max-width:82%;padding:10px 14px;border-radius:14px;font-size:12px;line-height:1.8}
+.sms-bub.her{align-self:flex-end;background:rgba(180,150,110,0.1);color:rgba(255,255,255,0.55);border-bottom-right-radius:4px}
+.sms-bub.him{align-self:flex-start;background:#181a24;color:rgba(255,255,255,0.45);border-bottom-left-radius:4px}
+.sms-bub.narr{align-self:stretch;background:transparent;color:rgba(255,255,255,0.4);font-size:12px;line-height:2;padding:6px 4px;max-width:100%;border-radius:0}
+.sms-report{text-align:center;padding:8px 14px;border-radius:8px;background:rgba(200,70,50,0.05);border:1px solid rgba(200,70,50,0.1);font-size:10px;color:rgba(255,255,255,0.2);line-height:1.6}
+.sms-report b{color:rgba(200,140,130,0.5);font-weight:400;display:block}
+.aff-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:20;pointer-events:none}
+.aff-popup{background:#1a1c26;border:1px solid rgba(200,170,130,0.3);border-radius:14px;padding:16px 20px;text-align:center;animation:popIn .3s ease;box-shadow:0 8px 32px rgba(0,0,0,0.5);pointer-events:auto}
+.aff-popup .aff-title{font-size:10px;color:rgba(200,170,130,0.5);letter-spacing:2px;margin-bottom:10px}
+.aff-popup .aff-row{display:flex;align-items:center;gap:10px;justify-content:center;margin:4px 0;font-size:12px}
+.aff-popup .aff-name{color:rgba(255,255,255,0.5);min-width:70px;text-align:right}
+.aff-popup .aff-change{font-weight:600;min-width:50px}
+.aff-popup .aff-change.up{color:#8ab4a0}.aff-popup .aff-change.down{color:#c08080}
+.aff-popup .aff-tap{font-size:9px;color:rgba(255,255,255,0.15);margin-top:10px;cursor:pointer}
+.end-cards{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.end-card{width:140px;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,0.06)}
+.end-card img{width:100%;height:170px;object-fit:cover;display:block}
+.end-card .lbl{padding:6px;font-size:9px;color:rgba(255,255,255,0.3);text-align:center;background:#111119}
+.end-card .badge{font-size:7px;color:#c8a870;padding:3px;text-align:center;background:#0a0a12;letter-spacing:1px}
+.id-cards{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+.id-card{width:145px;padding:20px 12px;border-radius:14px;border:1px solid rgba(255,255,255,0.06);background:#111119;cursor:pointer;text-align:center;transition:.2s}
+.id-card:hover{border-color:rgba(180,150,110,0.3)}
+.id-card .emoji{font-size:36px;margin-bottom:8px}
+.id-card .name{font-size:13px;color:#ccc;letter-spacing:1px}
+.btn{padding:10px 22px;border-radius:8px;border:1px solid rgba(180,150,110,0.35);background:rgba(180,150,110,0.06);color:#c8a870;font-size:11px;cursor:pointer;letter-spacing:1px;transition:.2s;display:inline-block;text-decoration:none}
+.btn:hover{background:rgba(180,150,110,0.16)}
+.btn.primary{background:rgba(180,150,110,0.16);border-color:rgba(200,170,130,0.5)}
+</style>
+</head>
+<body>
+<div class="phone" id="phone"><div class="screen" id="screen"></div></div>
+<div class="aff-overlay" id="affOverlay" style="display:none"><div class="aff-popup" id="affPopup"></div></div>
+<script>
+// GAME STATE
+var G={id:'',day:1,aff:{},affH:{},turn:{},exTo:{},meTo:{},_cb:null};
+var S_=document.getElementById('screen'),AO=document.getElementById('affOverlay'),AP=document.getElementById('affPopup');
+
+function V(h){S_.innerHTML='<div class="view">'+h+'</div>';}
+function Q(id){return document.getElementById(id);}
+function Mn(id){return DATA[G.id].ms.find(function(m){return m.id===id;});}
+function AL(v){return v>=70?'❤️❤️❤️':v>=50?'❤️❤️':v>=30?'❤️':'🤍';}
+
+var DATA={
+fa:{p:{n:'你',a:26},x:{n:'李柱延',id:'jy',a:30,e:'✈️'},ms:[{id:'jy',n:'李柱延',a:30,e:'✈️',x:1},{id:'hj',n:'李贤在',a:27,e:'🩺',x:0},{id:'jb',n:'裴俊英',a:28,e:'📷',x:0},{id:'er',n:'孙英宰',a:23,e:'🏀',x:0}],fD:'<b>姜宥真</b>：外向主动，大大咧咧实则敏感，很会撒娇。笑的时候右手会攥紧杯柄。<br><br><b>徐敏荷</b>：冷静理性，话不多，气场强。不主动但很有存在感，不笑的时候像杂志模特。<br><br><b>朴瑞妍</b>：温柔文艺，说话轻声细语，容易让人有保护欲。及腰黑长直，皮肤白得几乎透明。',mt:'你们在培训上认识。他是学员，你是新人。模拟舱那天，他坐你斜对面，全程没说一句话。后来你问他——他说，怕一开口就再也装不了冷静。',bu:'分手是你提的。五年了，他从来不说“为了你”。给你倒水，只是倒；给你垫靠垫，只是垫。你等他说，他等你看懂。等到最后，你累了。不是不爱了，是累了。',ph:'THE_B_HOUSE_assets/8b511c18gy1h8vgemc76sj20xc0xcajc.jpg',lp:'我的X是一个很慢热的人\n偶尔也会冷不丁地吐槽\n\nX走路慢慢的\n说话慢慢的\n\nX玩狼人杀的时候总是傻傻相信别人的话\n并不是X不够聪明\n而是因为X是善良的人\n\nX从来不对我说谎\n即使很受欢迎\n也从来不会把这当回事\n\nX很会关心别人\n但是不喜欢邀功\n\nX的幽默不难懂\n只是需要点耐心\n\nX情绪不好的时候不会说话\n只要抱抱他就好了\n\n如果X在这里遇到谁\n希望那个人能看懂X的顺手\n也能理解他的安静',le:'X总说我记不住事\n但关于X的事\n我常常会突然想起来\n然后愣住\n\nX第一次来我家\n带了一盆薄荷\n\nX有些怕生\n给人的第一印象就像薄荷一样冰凉\n但熟悉X的人会知道\nX其实像夏天的冰块一样让人舒心\n\nX很有主见\n是那种会让人放心的人\n但在恋人面前的X\n也会像小孩子一样撒娇\n\n和X在一起\n每天都能看到不一样可爱的她\n是男朋友的幸运\n\nX不太笑\n但笑起来左边先翘\n她自己不知道\n\nX喜欢热的东西\n热汤，热咖啡\n还有活泼的、热烈的心\nX值得世界上最好、最温暖的一切'},
+ch:{p:{n:'李贞',a:24},x:{n:'裴俊英(Jacob)',id:'jb',a:27,e:'💼'},ms:[{id:'jb',n:'裴俊英(Jacob)',a:27,e:'💼',x:1},{id:'hj',n:'李贤在',a:26,e:'🪖',x:0},{id:'yh',n:'金泳勋',a:28,e:'🌐',x:0},{id:'er',n:'孙英宰(Eric)',a:25,e:'⚽',x:0}],fD:'<b>女A·律师</b>：成熟型。气场强，不卑不亢，递东西的动作像递名片。<br><br><b>女B·编剧</b>：温柔型。声音软软的，会帮人摆盘子，容易被靠近。<br><br><b>女C·外科医生</b>：成熟型。话不多但每句都精准，习惯把手机扣在床头柜上。',mt:'他是你朋友的哥哥。第一次见面是高中，在朋友家客厅。他从学校回来，手里提着便利店袋子。那段时间你经常去朋友家写作业，他对你特别好，总是很温柔，满足了你小时候对哥哥的幻想。',bu:'分手是他提的。他希望你能找一份“稳定”的工作，而不是随着比赛到处飞。他说他养得起你，可他心里也清楚，你并不是一个甘心留在家里等他的人。',ph:'THE_B_HOUSE_assets/SaveClip.App_564259307_17974045274954379_9160089034478819477_n.jpg',lp:'Jacob是我见过最聪明的男人\n也是最贴心的男人\n\nX是我朋友的哥哥\n从小是优等生的X\n尽管工作很忙\n也注重家庭与身边的人\n\n出去吃饭\nX会记得身边的人忌口\n朋友的生日\nX也会准备好礼物提前送去\n\nX的父母也很亲切\n也许正是这样温暖的家庭\n才会培养出X一样天使般善良的人\n\n作为恋人的X 还要更加美好\n是在X的照料下\n我学会变成一个靠谱、不冷漠的人\n\n任何人靠近X\n都会明白我所说一切\n\n我真心希望X能够幸福\n比任何人都幸福',le:'我所认识的X\n既有孩童的天真烂漫\n也有作为女人的成熟与美好\n\nX对恋人非常坦率\n脱口而出的话语能让我幸福很久\n\nX是一个非常会表达爱的人\n\nX很受欢迎\n我周围所有的男生都认识X\n但X从来不会让我感觉不安全\n\nX是善良又有边界的人\n\n能成为X的恋人\n是我的幸运\n\n第一次见到X的时候\n她戴着软昵帽\n有着大大的眼睛\n\n这样的X\n是我记忆里见过最美丽的人'}};
+
+function iAff(){G.aff={};G.affH={};G.turn={};DATA[G.id].ms.forEach(function(m){G.aff[m.id]=m.x?40:30;G.affH[m.id]=[G.aff[m.id]];G.turn[m.id]=false;});}
+function cA(id,d){if(!G.turn[id]){G.aff[id]=Math.max(0,Math.min(100,G.aff[id]+d));G.affH[id].push(G.aff[id]);}}
+function tCheck(){var ms=[];DATA[G.id].ms.forEach(function(m){if(m.x||G.turn[m.id])return;var h=G.affH[m.id];if(h.length>=3&&h[h.length-1]<=h[h.length-2]&&h[h.length-2]<=h[h.length-3]){G.turn[m.id]=true;ms.push(m.e+' '+m.n+' 开始注意其他女嘉宾');}});return ms;}
+function gC(){var cs=[];DATA[G.id].ms.forEach(function(m){var h=G.affH[m.id];cs.push({id:m.id,d:h.length>=2?h[h.length-1]-h[h.length-2]:0});});return cs;}
+function aPop(cs,fn){var h='<div class="aff-title">✦ 好感度变化 ✦</div>';var any=false;cs.forEach(function(c){if(c.d===0)return;any=true;var m=Mn(c.id);h+='<div class="aff-row"><span class="aff-name">'+m.e+' '+m.n+'</span><span class="aff-change '+(c.d>0?'up':'down')+'">'+(c.d>0?'+':'')+c.d+'</span><span style="font-size:10px;color:rgba(255,255,255,0.2)">'+AL(G.aff[c.id])+'</span></div>';});if(!any)h+='<div style="font-size:10px;color:rgba(255,255,255,0.15)">好感度无明显变化</div>';h+='<div class="aff-tap">点击继续</div>';AP.innerHTML=h;AO.style.display='flex';AP.onclick=function(){AO.style.display='none';if(fn)fn();};}
+function DT(n,fn){G._cb=fn;V('<div class="day-title-wrap" onclick="G._cb()"><div class="day-num">DAY '+n+'</div><div class="day-divider"></div><div class="day-sub">'+(n===1?'第一天 · 入住日':n===2?'第二天 · 暧昧萌芽':n===3?'第三天 · 匿名约会':'第'+n+'天')+'</div><div class="day-tap">点击任意处继续</div></div>');}
+function lP(next){var d=DATA[G.id];G._cb=next;V('<div class="letter-page"><div class="letter-to">✉ 致 '+d.x.n+' · 你的介绍信</div><img src="'+d.ph+'" class="letter-photo"><div class="letter-body">'+d.lp+'</div><div class="letter-from">—— 你</div><div class="letter-actions"><span class="btn" onclick="G._cb()">翻看他的信 →</span></div></div>');}
+function lE(next){var d=DATA[G.id];G._cb=next;V('<div class="letter-page"><div class="letter-to">✉ 来自 '+d.x.n+' · 写给你的介绍信</div><img src="'+d.ph+'" class="letter-photo"><div class="letter-body">'+d.le+'</div><div style="font-size:10px;color:rgba(255,255,255,0.2);line-height:1.8;margin:14px 0;padding:14px 0;border-top:1px solid rgba(255,255,255,0.05);"><b style="color:rgba(255,255,255,0.4)">相识</b> '+d.mt+'<br><br><b style="color:rgba(255,255,255,0.4)">分手</b> '+d.bu+'</div><div class="letter-from">—— '+d.x.n+'</div><div class="letter-actions"><span class="btn primary" onclick="G._cb()">走进小屋 →</span></div></div>');}
+function C_(s,t,n,cs){var h='<div class="narr-wrap">';if(s)h+='<div class="narr-scene">'+s+'</div>';h+='<div class="narr-text">'+t+'</div>';if(cs&&cs.length){h+='<div class="choices-wrap">';cs.forEach(function(o){h+='<div class="choice-btn'+(o.p?' pick':'')+'" onclick="'+o.a+'">'+o.l+'</div>';});h+='</div>';}else if(n){G._cb=n;h+='<div class="tap-hint" onclick="G._cb()">点击继续</div>';}h+='</div>';V(h);}
+var _i=0,_p=[],_s='',_n=null,_o=null;
+function CP(s,p,n,o){_i=0;_p=p;_s=s;_n=n;_o=o||null;_sp();}
+function _sp(){if(_i>=_p.length){if(_o){}else if(_n)_n();return;}var h='<div class="narr-wrap">';if(_s&&_i===0)h+='<div class="narr-scene">'+_s+'</div>';h+='<div class="narr-text">'+_p[_i]+'</div>';if(_i<_p.length-1){h+='<div class="tap-hint" onclick="_i++;_sp()">点击继续 ('+(_i+1)+'/'+_p.length+')</div>';}else{if(_o&&_o.length){h+='<div class="choices-wrap">';_o.forEach(function(o){h+='<div class="choice-btn'+(o.p?' pick':'')+'" onclick="'+o.a+'">'+o.l+'</div>';});h+='</div>';}else if(_n){G._cb=_n;h+='<div class="tap-hint" onclick="G._cb()">点击继续</div>';}}h+='</div>';V(h);}
+function R_(i,t,n,cs){var c=gC();var h='<div class="react-wrap">';if(i)h+='<div class="react-icon">'+i+'</div>';h+='<div class="react-text">'+t+'</div>';if(c.some(function(x){return x.d!==0;})){h+='<div class="react-aff">';c.forEach(function(x){if(x.d===0)return;var m=Mn(x.id);var s=x.d>0?'up':'down';h+=m.e+' '+m.n+' <span class="'+s+'">'+(x.d>0?'+':'')+x.d+' '+AL(G.aff[x.id])+'</span><br>';});h+='</div>';}if(cs&&cs.length){h+='<div class="choices-wrap">';cs.forEach(function(o){h+='<div class="choice-btn'+(o.p?' pick':'')+'" onclick="'+o.a+'">'+o.l+'</div>';});h+='</div>';}else if(n){G._cb=n;h+='<div class="tap-hint" onclick="G._cb()">点击继续</div>';}h+='</div>';V(h);}
+function NT(fn){V('<div class="night-wrap"><div class="night-icon">📱</div><div class="night-title">深夜匿名短信</div><div class="night-rules">✦ 你必须给一位男嘉宾发送一条短信<br>✦ 匿名，禁止署名，禁止直接告白<br>✦ 你会收到<em>「前任报告」</em><br>——你的前任今晚将短信发给了谁<br>✦ 你的前任也会知道<em>你选择了谁</em><br>✦ 除短信外，嘉宾间不可私下联络</div><div class="tap-hint" onclick="'+fn.name+'()">进入收件箱 →</div></div>');}
+function sV(t,b){V('<div class="sms-top"><span class="title-sms">'+t+'</span><span class="badge-sms">'+b+'</span></div><div class="sms-log" id="smsLog"></div>');}
+function ss(t){var l=Q('smsLog');if(!l)return;var d=document.createElement('div');d.className='sms-sys';d.textContent=t;l.appendChild(d);l.scrollTop=l.scrollHeight;}
+function st(t){var l=Q('smsLog');if(!l)return;var d=document.createElement('div');d.className='sms-time';d.textContent=t;l.appendChild(d);l.scrollTop=l.scrollHeight;}
+function sb(t,s){var l=Q('smsLog');if(!l)return;var d=document.createElement('div');d.className='sms-bub '+s;d.innerHTML=t.replace(/\\n/g,'<br>');l.appendChild(d);l.scrollTop=l.scrollHeight;}
+function sn_(t){var l=Q('smsLog');if(!l)return;var d=document.createElement('div');d.className='sms-bub narr';d.innerHTML=t;l.appendChild(d);l.scrollTop=l.scrollHeight;}
+function sr_(t){var l=Q('smsLog');if(!l)return;var d=document.createElement('div');d.className='sms-report';d.innerHTML=t;l.appendChild(d);l.scrollTop=l.scrollHeight;}
+function sa(cs){var l=Q('smsLog');if(!l)return;var d=document.createElement('div');d.className='choices-wrap';cs.forEach(function(o){var b=document.createElement('div');b.className='choice-btn'+(o.p?' pick':'');b.textContent=o.l;b.onclick=o.a;d.appendChild(b);});l.appendChild(d);l.scrollTop=l.scrollHeight;}
+
+// SCREENS
+function showRules(){
+  V('<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:30px 24px;text-align:center"><div style="font-size:10px;letter-spacing:3px;color:rgba(255,255,255,0.15);margin-bottom:8px">换乘恋爱 · 酸涩版</div><div style="font-size:20px;color:#d8ccb8;font-weight:300;letter-spacing:4px;margin-bottom:4px">THE B HOUSE</div><div style="font-size:10px;color:rgba(255,255,255,0.15);letter-spacing:3px;margin-bottom:28px">4 MEN · 4 WOMEN · 10 DAYS</div><div style="max-width:300px;text-align:left;font-size:12px;color:rgba(255,255,255,0.4);line-height:2.2"><p>✈️ <b style="color:rgba(255,255,255,0.6)">你和你的前任，都是嘉宾。</b>你们分手了，但住在同一栋房子里。不能表现出你们认识。</p><p style="margin-top:12px">📱 <b style="color:rgba(255,255,255,0.6)">每晚一条匿名短信。</b>你可以发给他，也可以不。但你总会收到一条通知：「你的前任将短信发给了______」</p><p style="margin-top:12px">👥 <b style="color:rgba(255,255,255,0.6)">他不是只看着你。</b>三位女嘉宾会主动。三位新男嘉宾也在靠近你。</p><p style="margin-top:12px">🎯 <b style="color:rgba(255,255,255,0.6)">Day 10，最终选择。</b>走向一个人，或不走向任何人。</p></div><div style="font-size:11px;color:rgba(200,150,100,0.4);line-height:1.8;margin:20px 0;font-style:italic">第一天。他收到了你的前任通知。<br>你也收到了他的。<br><em style="color:#c8a870">他发给了别人。</em></div><span class="btn primary" onclick="showEndings()">继续</span></div>');
+}
+
+function showEndings(){
+  V('<div style="display:flex;flex-direction:column;align-items:center;padding:24px 20px;text-align:center"><div style="font-size:14px;color:#d8ccb8;letter-spacing:2px;font-weight:300;margin-bottom:4px">结局图鉴</div><div style="font-size:10px;color:rgba(255,255,255,0.15);letter-spacing:2px;margin-bottom:20px">✦ 以下为人工校对版本，推荐先玩 ✦</div><div class="end-cards"><div class="end-card"><img src="THE_B_HOUSE_assets/大韩空姐x飞行员.JPG"><div class="badge">✦ 人工校对 ✦</div><div class="lbl">空姐 × 飞行员<br>李柱延</div></div><div class="end-card"><img src="THE_B_HOUSE_assets/啦啦队x特种部队.JPG"><div class="badge">✦ 人工校对 ✦</div><div class="lbl">啦啦队 × 特种兵<br>李贤在</div></div><div class="end-card"><img src="THE_B_HOUSE_assets/啦啦队x运动员.JPG"><div class="badge">✦ 人工校对 ✦</div><div class="lbl">啦啦队 × 运动员<br>Eric</div></div></div><div style="margin-top:16px;font-size:10px;color:rgba(255,255,255,0.2);line-height:1.6">其他支线为AI生成，可能AI感较重<br>推荐先体验人工校对过的剧情线</div><span class="btn primary" style="margin-top:18px" onclick="showIdSelect()">选择身份</span></div>');
+}
+
+function showIdSelect(){
+  V('<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center"><div style="font-size:16px;color:#d8ccb8;letter-spacing:2px;font-weight:300;margin-bottom:6px">选择你的身份</div><div style="font-size:10px;color:rgba(255,255,255,0.15);letter-spacing:3px;margin-bottom:24px">点击卡片查看详情</div><div class="id-cards"><div class="id-card" onclick="pId(\'fa\')"><div class="emoji">✈️</div><div class="name">大韩航空空乘</div><div style="font-size:9px;color:rgba(255,255,255,0.15);margin-top:4px">26岁 · 有主见</div></div><div class="id-card" onclick="pId(\'ch\')"><div class="emoji">📣</div><div class="name">啦啦队队员</div><div style="font-size:9px;color:rgba(255,255,255,0.15);margin-top:4px">24岁 · 可爱·回避型</div></div></div><div id="pB" style="margin-top:16px;width:100%;max-width:300px"></div></div>');
+}
+
+function pId(k){var d=DATA[k];Q('pB').innerHTML='<div style="background:#111119;border-radius:12px;padding:14px;border:1px solid rgba(180,150,110,0.25);text-align:center"><div style="font-size:13px;color:#d8ccb8;margin-bottom:4px">你的前任：<b style="color:rgba(255,255,255,0.7)">'+d.x.n+'</b></div><div style="font-size:10px;color:rgba(255,255,255,0.3);line-height:1.8;margin-bottom:8px">男嘉宾：'+d.ms.filter(function(m){return !m.x;}).map(function(m){return m.n;}).join(' / ')+'</div><span class="btn primary" onclick="sGame(\''+k+'\')">选择此身份</span></div>';}
+
+function sGame(k){G.id=k;G.day=1;iAff();lP(function(){lE(function(){DT(1,d1);});});}
+
+function d1(){G.day=1;if(G.id==='fa')d1a();else d1c();}
+
+// === AIRLINE DAY 1 ===
+function d1a(){
+  CP('✦ 晨间镜头 · 入场 ✦',[
+    '早上七点十五分。你最后一个到——昨晚航班延误了四个小时，你几乎没睡。拖着行李箱进门的时候，地毯上已经坐了一圈人。<br><br>屋里的人陆续抬头。七个陌生人，一个是曾经最熟悉的。',
+    DATA[G.id].fD,
+    '“大韩航空的制服，我认得。”<br><br>李贤在从二楼下来，刚洗完澡，头发还湿着。他看着你的制服，嘴角带笑。<br><br>李柱延坐在单人沙发里，手里转着一杯水。他没开口，但目光落在你行李箱贴纸上——那是你们以前一起去东京时买的。他记得。',
+    'Eric从厨房探出头，煎蛋铲还在手里。“空姐？那岂不是很会照顾人？”他笑起来有点犬齿，T恤穿反了。<br><br>裴俊英靠在玄关柜子旁，帮你把行李箱往里推了推。“二楼还有空房间。”他声音很低。'
+  ],d1a_t);}
+function d1a_t(){
+  C_('✦ 任务 · 第一印象信封 ✦','主持人：“在卡片上写下对在场四位异性的第一印象。一个词。”<br><br>你写下：熟悉 / 标准 / 细节 / 热量<br><br>“对某位男嘉宾的印象：<em>旧物</em>。”<br><br>客厅安静了一秒。李柱延坐在角落，目光落在那张卡片上，看了很久。',d1a_ex);}
+function d1a_ex(){
+  C_('✦ 夜晚 · EX 事件 ✦','晚上，客厅放一部老电影。你坐在沙发一角，李柱延坐在另一角，中间隔着两个人。<br><br>电影放到一半，你下意识摸了摸后颈——坐久了会僵。以前和他在一起的时候他会……你停住手。<br><br>五分钟后，一个靠垫从旁边递过来，垫在你腰后。<br><br>“垫着。沙发太软。”<br><br>是陈述句，不是问句。你知道，他记得——只是从来不说是为了你。',d1a_h);}
+function d1a_h(){C_('✦ 隐藏镜头 ✦','姜宥真在房间和徐敏荷聊天：“那个空姐，感觉不好接近，看着冷冷的。”<br><br>电影结束后，李柱延收拾靠垫。把你用过的那个单独放在一边，抱在怀里上了楼。<br><br>裴俊英在走廊看着你房间的灯亮了很久。Eric在厨房偷偷练煎蛋。朴瑞妍写日记，写一行划掉。',function(){NT(d1a_sms);});}
+function d1a_sms(){
+  sV('匿名短信','DAY 1 · 深夜');ss('✦ 今晚共有 4 条短信发送至 4 位女嘉宾 ✦');st('23:47');
+  sb('今天一直在想一个词。','him');sb('你进门的时候，风铃响了。','him');ss('— 你收到了 2 条 —');
+  sr_('⚡ 前任报告 ⚡<br>你的前任（李柱延）今晚将短信发给了<br><b>朴瑞妍</b>');sn_('没有你的名字。');
+  sn_('像遇到晴空湍流，心突然失重了一秒。<br><br>为什么。这个人，连第一天的消息都不愿意发给我。');
+  ss('✦ 你必须发出一条短信 ✦');
+  sa([{l:'A. 发给李柱延：你的制服外套落在客厅了。',a:function(){d1a_s('jy','你的制服外套落在客厅了。')}},{l:'B. 发给裴俊英：谢谢你今天注意到这么多细节，白色很配你。',a:function(){d1a_s('jb','谢谢你今天注意到这么多细节，白色很配你。')}},{l:'C. 发给李贤在：你说制服那句话的时候，头发还没干。',a:function(){d1a_s('hj','你说制服那句话的时候，头发还没干。')}},{l:'D. 发给Eric：煎蛋别练了，早点睡。',a:function(){d1a_s('er','煎蛋别练了，早点睡。')}}]);}
+function d1a_s(to,msg){G.meTo[1]=to;sV('匿名短信','DAY 1 · 深夜');
+  if(to==='jb'){cA('jb',5);cA('jy',-3);}else if(to==='hj')cA('hj',5);else if(to==='er')cA('er',5);
+  sb(msg,'her');sn_('发送成功。<br><br>你把手机翻了个面，扣在枕边。<br><br>窗外，一架飞机正在降落。起落架灯在夜空中划出两道平行线。');
+  G.exTo[1]='朴瑞妍';sr_('⚡ 前任报告 ⚡<br>你的前任（李柱延）今晚将短信发给了<br><b>朴瑞妍</b>');
+  aPop(gC(),function(){tCheck();sa([{l:'DAY 1 结束 · 进入 DAY 2',a:function(){DT(2,d2);},p:true}]);});}
+
+// === CHEER DAY 1 ===
+function d1c(){
+  CP('✦ 晨间镜头 ✦',[
+    '你选了二楼靠角落的房间。下楼时，厨房里已经有人。<br><br>裴俊英站在料理台前煎蛋，听见脚步声回头——看见是你，锅铲在半空停了一秒。“早。”声音很轻，像怕惊扰什么。',
+    DATA[G.id].fD,
+    '你走进客厅，Eric从客厅沙发弹起来问候，<br>“早上好，我是Eric！厨房里是Jacob哥在煎蛋，我们一会做三明治吃！”<br>他洋溢的热情让裴俊英的背影僵了一瞬。<br><br>金泳勋倚在餐厅门框上，似笑非笑，举着咖啡向你致意。<br>李贤在则从客厅走向冰箱，女A站在他旁边，二人之前似乎在试探什么。'
+  ],d1c_g);}
+function d1c_g(){
+  C_('✦ 公共区域 · 破冰游戏 ✦','“我们来玩个破冰游戏吧，”金泳勋放下咖啡杯。<br>“每人说一件自己做过最疯狂的事。”<br><br>“我先！”Eric举手，“我在世界杯预选赛进球后，跑到观众席亲了一个陌生球迷——”<br>“那是骚扰。”女C头也不抬。<br>“可她后来成了我粉丝站站长……”Eric挠挠头。<br><br>女A吸一口饮料：“以前我在国外上学，房东临时退租，只好在街头流浪了两天。”<br><br>女B声音软软的，“我曾经一个人去了内乱中的国家支教。”<br><br>轮到你了。所有人的目光看过来。',null,[{l:'A. “我没什么疯狂的。”低头喝果汁。',a:"d1c_p('av')"},{l:'B. 说一场临时救场的比赛经历。',a:"d1c_p('sh')"}]);}
+function d1c_p(t){
+  if(t==='ex'){cA('jb',5);R_('💔','你看向裴俊英。全桌安静了一秒——他的锅铲停在半空。Eric警觉地来回看，金泳勋的目光在你和他之间微妙地停顿。<br><br>裴俊英低下头，拇指无意识地摩挲杯沿。',d1c_rk);}
+  else if(t==='sh'){cA('er',3);R_('📣','你隐去了自己的职业，讲起曾经为了学一个舞蹈两天没吃饭没睡觉地练。<br><br>Eric眼睛发亮：“太酷了！”<br><br>裴俊英默默垂下了眼睫——他知道是哪场比赛。<br>那天他在加班，没去成。',d1c_rk);}
+  else{R_('😶','除了裴俊英，大家都被你的坦率噎到了。<br><br>金泳勋轻轻笑出了声，接过话头帮你打圆场。<br><br>李贤在也很捧场地没再提这茬。',d1c_rk);}
+}
+function d1c_rk(){C_('✦ 心动排名 ✦','节目组通知：每位嘉宾写下对四位异性的心动顺序，投入玄关信箱。你捏着笔，盯着卡片。',function(){d1c_kt();});}
+function d1c_kt(){
+  C_('✦ 傍晚 · 厨房 ✦','你回了房间。傍晚下楼拿水，在厨房撞见裴俊英。<br>夕阳把他的轮廓削得很薄。<br><br>“……你好像瘦了点，”他总是这样润物无声地关心你。<br>“冰箱里有没放肉的炸酱面。”',null,[{l:'A. 沉默，拿一瓶水就走。',a:"d1c_kp('si')"},{l:'B. “谢谢。”然后打开冰箱。',a:"d1c_kp('th')"},{l:'C. 含泪，“欧巴是来认识新人的么？”',a:"d1c_kp('wh')"}]);}
+function d1c_kp(t){
+  if(t==='wh'){cA('jb',8);R_('💬','“欧巴是来认识新人的么？”<br><br>他张了张口，夕阳的光把他的睫毛照成金色。<br><br>“李贞，如果你做这个职业，”他声音低下去，<br>“我希望上这个节目能对你有帮助。”<br><br>你的手指掐进掌心。楼下传来别人的笑声，像从另一个世界传来。<br>你逃回了房间。',function(){NT(d1c_sms);});}
+  else if(t==='th'){cA('jb',5);R_('🍳','“……谢谢。”<br><br>声音轻得像羽毛落地。<br><br>你打开冰箱，取出面放进微波炉。<br><br>他看着你忙碌的背影没再说什么，转身走了。',function(){NT(d1c_sms);});}
+  else{cA('jb',-3);R_('🚪','你沉默，拿了一瓶水就走。经过他身边时，袖子擦过他的手背。<br><br>他站在原地，铁筷在盘子上刮出一声轻响。<br><br>你关上门之后，他在厨房里站了很久。',function(){NT(d1c_sms);});}
+}
+function d1c_sms(){sV("匿名短信","DAY 1 · 深夜");sb("声音也很美。","him");ss("— 你收到了 1 条 —");G.exTo[1]="女NPC B";sr_("✦ 前任报告 ✦<br>你的前任（裴俊英）今晚将短信发给了<br><b>女NPC B</b>");sn_("他没有选择你。");sa([{l:"A. 发给裴俊英：我现在吃肉了。",a:function(){d1c_s("jb","我现在吃肉了。")}},{l:"B. 发给李贤在：明天见。",a:function(){d1c_s("hj","明天见。")}},{l:"C. 发给Eric：艾力克kkk",a:function(){d1c_s("er","艾力克kkk")}},{l:"D. 发给金泳勋：ฅ^•ﻌ•^ฅ",a:function(){d1c_s("yh","ฅ^•ﻌ•^ฅ")}}]);}
+
+function d1c_s(to,msg){G.meTo[1]=to;sV("匿名短信","DAY 1 · 深夜");if(to==="jb")cA("jb",5);else if(to==="hj")cA("hj",5);else if(to==="er")cA("er",5);else cA("yh",5);sb(msg,"her");sn_("发送成功。<br><br>你走到无人的露台，远处楼宇的灯火明明灭灭，城市的噪音变成一种嗡鸣。");aPop(gC(),function(){tCheck();sa([{l:"DAY 1 结束 · 进入 DAY 2",a:function(){DT(2,d2);},p:true}]);});}
+
+// === DAY 2 ===
+function d2(){G.day=2;if(G.id==='fa')d2a();else d2c();}
+function d2a(){
+  CP('✦ 晨间镜头 ✦',[
+    '凌晨三点十七分，你醒了。躺在床上盯着天花板。<br><br>早上六点四十。裴俊英第一个下楼，那件洗白的牛仔衬衫。煮咖啡，三勺豆子又加一勺。',
+    '你下楼时，李柱延从走廊尽头出来。昨晚没睡好，下巴有淡淡的青。转角狭路相逢。<br><br>“早。”<br>“早。”<br><br>擦肩而过。但你在楼梯扶手上看到——一杯温水，便利贴字迹熟悉：<em>“温的。”</em><br><br>你盯着看了两秒。没拿。'
+  ],d2a_p2);}
+function d2a_p2(){
+  C_('✦ 公共区域 ✦','李贤在穿着浅灰针织衫，对所有人笑：“谁要吃早餐？”目光扫过你：“你呢？胃口是不是被工作餐虐待惯了？”<br><br>你还没回答，裴俊英端着咖啡走过来放你面前。“浅烘的。你昨天手里拿的是浅烘的杯子。”你愣了一下。<br><br>Eric凑近你：“你今天喷香水了？”“就是那种很干净的味道！”<br><br>“是白茶。”裴俊英开口。“她昨天也是这个味道。”<br><br>李柱延关掉手机：“我出去抽烟。”',d2a_o);}
+function d2a_o(){
+  C_('✦ 1对1 · 厨房 · 李贤在 ✦','你在洗杯子。李贤在靠在冰箱旁。<br><br>“裴俊英挺有意思的。他记细节——时间、颜色、味道。”<br><br>“医生不也记细节？”<br><br>他笑了：“我记的是症状，他记的是……<em>瞬间</em>。”<br><br>走近一步。须后水的味道，柑橘调，和李柱延的木质调完全不同。<br><br>“但你不吃这套。他昨天看你十七分钟，你其实知道。”“我知道。”“但你没躲。”<br><br>他退后一步：“今晚有任务。匿名投票——<em>你猜我会选谁？</em>”',d2a_v);}
+function d2a_v(){C_('✦ 匿名投票 ✦','今天最想和谁一起准备晚餐？',null,[{l:'投给李柱延',a:"d2a_vg('jy')"},{l:'投给李贤在',a:"d2a_vg('hj')",p:true},{l:'投给裴俊英',a:"d2a_vg('jb')"}]);}
+function d2a_vg(v){
+  if(v==='hj'){cA('hj',8);R_('🗳️','李贤在从投给他的两人中选择了<em>你</em>。<br><br>姜宥真脸上的笑僵了一秒：“哦——贤在哥果然喜欢有挑战性的。”<br><br>李贤在没接话，只是对你笑了笑。',d2a_vn('hj'));}
+  else if(v==='jy'){cA('jy',3);R_('🗳️','李柱延从投给他的人中选了徐敏荷。你和裴俊英成为晚餐搭档。',d2a_vn('jy'));}
+  else{cA('jb',5);R_('🗳️','裴俊英选了你。你们成为晚餐搭档。',d2a_vn('jb'));}
+}
+function d2a_vn(p){return function(){C_('✦ 晚餐 · 对视30秒 ✦',p==='hj'?'李贤在看着你，嘴角带笑。“你眼睛不躲。”“为什么要躲？”“大多数人会。”三十秒结束，他忽然说：“你左边眉毛比右边挑得高一点。”':'备菜时，节目组发布任务：对视30秒。你们面对面。他眼睛很亮。“你眼睛不躲。”他说。三十秒结束，他转身继续切菜，眼睛有点红。',d2a_ex);};}
+function d2a_ex(){
+  C_('✦ EX 事件 ✦','晚餐后，你在二楼走廊找吹风机。李柱延从房间走出来，手里拿着一件外套——你昨天落在客厅的制服外套。<br><br>“你的。”你没拽动。他没松手。<br><br>“朴瑞妍。你看到了？”你“嗯”了一声。<br><br>“<em>她像以前的你。安静。喜欢听歌。会把脸埋进枕头里。但她不是你。</em>”<br><br>他松手。转身回房，关门前说了一句：“白色很配他。确实。”',d2a_h);}
+function d2a_h(){C_('✦ 隐藏镜头 ✦','姜宥真试了三套衣服，最后选了最普通的。“不能比他耀眼，会被看穿。”<br><br>徐敏荷注意到李柱延切菜的手法。“你常做饭？”“以前做。现在不做了。”<br><br>裴俊英在洗手间洗了很久的脸。拿出手机，打了删了，最后只打了一个字。<br><br>Eric偷偷把好的部分夹给朴瑞妍。她吃了说好吃。姜宥真看到了，低头喝了口汤。',function(){NT(d2a_sms);});}
+function d2a_sms(){
+  sV('匿名短信','DAY 2 · 深夜');sb('阳台的风铃，确实是白色的。','him');ss('— 你收到了 1 条 —');
+  G.exTo[2]='徐敏荷';sr_('⚡ 前任报告 ⚡<br>你的前任（李柱延）今晚将短信发给了<br><b>徐敏荷</b>');
+  sn_('连续两天：朴瑞妍→徐敏荷。就是不肯发给你。');
+  sa([{l:'A. 发给李柱延：朴瑞妍，徐敏荷。她们都比我更让你放心开口吗？',a:function(){d2a_s('jy','朴瑞妍，徐敏荷。她们都比我更让你放心开口吗？')}},{l:'B. 发给裴俊英：风铃确实是白色的。你也确实很会记。',a:function(){d2a_s('jb','风铃确实是白色的。你也确实很会记。')}},{l:'C. 发给李贤在：好吃。',a:function(){d2a_s('hj','好吃。')}}]);}
+function d2a_s(to,msg){G.meTo[2]=to;sV('匿名短信','DAY 2 · 深夜');
+  if(to==='jy')cA('jy',5);else if(to==='jb')cA('jb',5);else cA('hj',5);
+  sb(msg,'her');sn_('发送成功。<br><br>你把手机翻了个面，扣在枕边。<br><br>窗外，一架飞机正在降落。');
+  aPop(gC(),function(){tCheck();sa([{l:'DAY 2 结束 · 进入 DAY 3',a:function(){DT(3,d3);},p:true}]);});}
+
+function d2c(){
+  CP('✦ 晨间镜头 ✦',[
+    '第二天。回避的壳更厚了，但壳外的声音更响了。<br><br>“早！李贞！草莓奶昔——”<br>“谢谢呀，我不喝甜的。”<br>Eric没犹豫：“那我再做杯无糖的！”<br><br>另一边的李贤在感叹道，“难得有人跟我一样挑食了。”<br>金泳勋吐槽他，“昨天看你饭量像饭桶。”<br><br>裴俊英从二楼下来，穿着白衬衫配工牌，经过你身边时脚步顿了一下。'
+  ],d2c_t);}
+function d2c_t(){
+  C_("✦ 午餐任务 · 厨房 ✦","抽签结果：裴俊英 & 你。<br><br>他系上围裙。你们在一起两年，你知道他切菜时左手无名指会蜷起来。<br><br>客厅传来动静——金泳勋和女A准备出门去超市。<br>Eric跑来你身旁帮忙。你默默抿嘴。刀在砧板上敲出一声钝响。<br><br>“你想做什么？”他没看你，在洗蔬菜。",null,[{l:"A. “随便。”",a:"d2c_ck('si')"},{l:"B. “……蛋包饭吧。”",a:"d2c_ck('me')",p:true},{l:"C. 看向一旁，“Eric你最想吃什么？”",a:"d2c_ck('op')"}]);}
+function d2c_ck(t){
+  if(t==='op'){cA('jb',10);R_('💕','Eric仿佛没察觉到气氛的微妙，<br>开心地点菜，“我要吃LA排骨！”<br><br>Jacob看着他无奈地笑了，举手投降：<br>“太难了，我不会。”',d2c_ex);}
+  else if(t==='me'){cA('jb',5);R_('🍳','“蛋包饭...吗？”<br><br>他的刀停在砧板上。然后继续切，刀速慢了一拍。<br>你记得。他也记得——<br>曾经他为你做过最多的菜就是蛋包饭。',d2c_ex);}
+  else{cA('jb',-3);R_('😶','“随便。”<br><br>他点了点头，没再问。砧板上的洋葱被切得细碎，刀速均匀。<br><br>你心里默默期望，也许他会做你爱吃的菜。',d2c_ex);}
+}
+function d2c_ex(){
+  C_("✦ EX 事件 · 前任回忆夜 ✦","节目组把你带到小黑屋，戴上耳机。三段音频。<br><br><em>第一段：</em>“欧巴，我今天比赛赢了！”“……嗯。你跳得很好看。”“你怎么看到的？”“……我请假了。观众席最后一排。”<br><br><em>第二段：</em>“今天我是世界上最幸福的！”“为什么呀”“因为我有世界上最好的欧巴！”<br><br><em>第三段：</em>“李贞，我们谈谈。”“没什么好谈的。”“我不是要你改——”“行了！你别说了！”<br><br>你摘下耳机，脸上全是泪。<br><br>回房间时你在走廊远远看到裴俊英的身影。",null,[{l:"A. 绕过他，回房间。",a:"R_('🚪','你低下头，从他身边走过。袖子擦过他的手背。<br><br>他站在原地。你没回头，所以没看到——他的手在口袋里攥紧又松开。<br><br>房间门关上。走廊灯灭了。',d2c_sms2)"},{l:"B. “欧巴……对不起。”",a:"d2c_op()",p:true}]);}
+function d2c_op(){cA("jb",8);R_("💧","“欧巴……对不起。”<br><br>他的肩膀塌下去，走到你一步之外。<br>“……为什么道歉？”<br><br>你看着他，这个距离，你能闻到他身上久违的洗发水味，能看见他睫毛上的湿意。<br><br>你摇摇头，没说话，泪却止不住流。<br><br>他长叹了口气，伸手抱住了你，像安慰一个婴儿般拍了拍。<br>你知道，在他面前你永远长不大。",d2c_sms2);}
+function d2c_sms2(){NT(d2c_sms);}
+function d2c_sms(){sV("匿名短信","DAY 2 · 深夜");ss("✦ 你必须发出一条短信 ✦");sb("你不会可乐也喝无糖的吧？","him");sb("我明天有空。","him");ss("— 你收到了 2 条 —");G.exTo[2]="女NPC B";sr_("✦ 前任报告 ✦<br>你的前任（裴俊英）今晚将短信发给了<br><b>女NPC B</b>");sn_("裴俊英..难道被困在回忆里的只有我一个人吗..？");sa([{l:"A. 发给裴俊英：别加班 早点睡吧",a:function(){d2c_s("jb","别加班 早点睡吧")}},{l:"B. 发给李贤在：明早七点，健身房见",a:function(){d2c_s("hj","明早七点，健身房见")}},{l:"C. 发给Eric：我看过你踢球哦",a:function(){d2c_s("er","我看过你踢球哦")}},{l:"D. 发给金泳勋：遇见你让我很开心",a:function(){d2c_s("yh","遇见你让我很开心")}}]);}
+function d2c_s(to,msg){G.meTo[2]=to;sV('匿名短信','DAY 2 · 深夜');
+  if(to==='jb')cA('jb',8);else if(to==='hj')cA('hj',8);else cA('er',8);
+  sb(msg,'her');sn_('发送成功。<br><br>你把手机翻了个面，扣在枕边。');
+  aPop(gC(),function(){tCheck();sa([{l:'DAY 2 结束 · 进入 DAY 3',a:function(){DT(3,d3);},p:true}]);});}
+
+// === DAY 3 ===
+function d3(){G.day=3;if(G.id==='fa')d3a();else d3c();}
+
+function d3a(){
+  CP('✦ 晨间镜头 ✦',[
+    '你凌晨四点醒了。不是被吵醒的——身体里的航班时钟在响。<br><br>李柱延连续两天：朴瑞妍、徐敏荷。就是不肯发给你。<br><br>你下楼时眼睛下面有淡淡的青。裴俊英在厨房：“浅烘的，还是深烘的？”“深烘。越苦越好。”',
+    '李贤在从二楼下来，笑了一下。“好吃？”<br><br>“我收到了。只有两个字，但我想了二十分钟该回什么。”“那你回了什么？”他笑：“你猜。”<br><br>你没猜，转身去倒水。李柱延坐在餐桌边，一杯黑咖啡。抬头看了你一眼，目光在眼睛下面停了一秒，移开。没说话。'
+  ],d3a_dp);}
+function d3a_dp(){
+  C_('✦ 任务 · 匿名信物约会 ✦','节目组宣布：四位女嘉宾各自准备约会方案和信物，放进木盒。男嘉宾根据信物选择——不知道背后是谁。<br><br>姜宥真：“去试一件不敢穿的衣服！”徐敏荷画草图：“拆除中的建筑天台。”朴瑞妍轻声说：“深夜唱片店。”<br><br>你已经在想那张机票存根了——KE704，2019年12月，成田-首尔。在你行李箱夹层里，放了五年。',d3a_jy);}
+function d3a_jy(){
+  C_('✦ 走廊 · 李柱延 ✦','你把机票存根拿出来。写卡片：<em>“去机场滩涂，看飞机低空掠过，吃一碗热汤面。——要一起吗？”</em><br><br>门没关。李柱延站在走廊上。<br><br>“KE704。”他说，声音低得几乎听不见。<br><br>“你留着。”“我留着很多东西。不是每件都有用。”<br><br>他看着你，像驾驶舱里的天气雷达图——绿蓝里藏着红色。<br><br>“那就别放出去。”“为什么？”他没回答。灯灭了。再亮时，他走了。',d3a_jb);}
+function d3a_jb(){
+  C_('✦ 客厅 · 裴俊英 ✦','你下楼放信封。裴俊英在调相机。<br><br>“信物？”“嗯。”“我能看看吗？”<br><br>他打开信封，看到机票存根。<br><br>“旧物。比新东西诚实。有折痕，有褪色，有水渍。它经历过什么——骗不了人。”<br><br>“你选的时候，会选这个吗？”<br><br>他看着你，很久。<br><br>“会。因为我想知道，是谁把一段过去放在这里——还敢让人选。”',d3a_tk);}
+function d3a_tk(){
+  C_('✦ 信物选择 ✦','晚上八点。木盒里的四件信物：<br><br>1. 珊瑚色口红——“去试一件不敢穿的衣服。”<br>2. 银色比例尺——“去拆除中的建筑天台。”<br>3. 无封面黑胶——“去深夜唱片店。”<br>4. 机票存根 KE704——“去机场滩涂，吃一碗热汤面。”<br><br>李柱延第一个走到木盒前。拿起机票存根——翻到背面，指腹蹭过航班号。他闭了闭眼。放下。拿起了比例尺。<br><br>裴俊英第二个。直接拿了机票存根。<br><br>李贤在拿起口红：“有意思。”<br><br>Eric拿了黑胶。',d3a_dt);}
+function d3a_dt(){
+  CP('✦ 四组约会 ✦',[
+    '<em>裴俊英 & 你 · 机场滩涂</em><br><br>他看到你时愣了一下，然后笑：“原来是你。”“失望了？”“不。是确定了。”<br><br>远处一架飞机降落，引擎声轰鸣。你下意识报出：“KE704，高度300，速度140。”<br><br>裴俊英看着你。“习惯。”“不是习惯。是条件反射。像叫一个名字。”<br><br>远处堤坝上——徐敏荷的黑色外套被风吹起来，李柱延站在她旁边，正看向你们。',
+    '<em>李柱延 & 徐敏荷 · 天台</em><br><br>“你选这个，想逃开什么？”“只是想看点确定的东西。”“拆除中的建筑，可不确定。”“至少它要倒的时候，”他说，“会发出声音。”<br><br>他看向远处——滩涂。“KE704。”他轻声说。徐敏荷没听清。',
+    '<em>李贤在 & 姜宥真 · 口红</em><br><br>三支口红。他一支支拿起来。“这支太艳。这支太淡。这支——你涂过。”“你怎么知道？”“管身有磨损，膏体斜切面是向右的。”<br><br>姜宥真从镜子里看他。他俯身，把口红递给她。她接过，指尖碰到他的手指。没躲。',
+    '<em>Eric & 朴瑞妍 · 唱片店</em><br><br>“你耳朵红了。”“店里太热了。”“凌晨两点，不热。”<br><br>Eric盯着转动的唱片：“这歌叫什么？”<br><br>“Almost Blue。”朴瑞妍说。“几乎，是蓝色。”'
+  ],d3a_ex);}
+function d3a_ex(){
+  C_('✦ EX 事件 ✦','回程。裴俊英的车在路口等红灯。旁边的出租车后座——李柱延和徐敏荷。<br><br>徐敏荷在说话。李柱延看着窗外——目光正对上你的。<br><br>隔着两层玻璃对视。红灯，九十秒。<br><br>你手里攥着机票存根。裴俊英看到了。他打开收音机。很吵的摇滚乐。<br><br>绿灯。两辆车分开。',d3a_hd);}
+function d3a_hd(){
+  C_('✦ 隐藏镜头 ✦','李柱延在木盒前站了五分钟。拿起机票，放下，拿起，放下。最后把机票压在最下面——好像不想让别人看到。<br><br>姜宥真在二楼走廊看到了全过程。咬着嘴唇，嘴角弯了一下，但那笑没到眼睛。<br><br>朴瑞妍看到Eric选了黑胶，把一张手绘卡片偷偷塞进口袋。<br><br>徐敏荷看到李柱延拿了她的尺子。她没说的是，那件黑色外套是五年前买的，几乎没穿过。',function(){NT(d3a_sms);});}
+function d3a_sms(){
+  sV('匿名短信','DAY 3 · 深夜');sb('飞机掠过的时候，你报的是呼号。不是航班号。是呼号。','him');ss('— 你收到了 1 条 —');
+  G.exTo[3]='朴瑞妍';sr_('⚡ 前任报告 ⚡<br>你的前任（李柱延）今晚将短信发给了<br><b>朴瑞妍</b>');
+  sn_('连续三天。朴瑞妍→徐敏荷→朴瑞妍。从来没有你。<br><br>机票存根放在木盒里，他拿起来，看了一辈子——然后放下了。');
+  sa([{l:'A. 发给李柱延：KE704。你看到了。为什么不敢选。',a:function(){d3a_s('jy','KE704。你看到了。为什么不敢选。')}},{l:'B. 发给裴俊英：你居然去查了。呼号都查得到。',a:function(){d3a_s('jb','你居然去查了。呼号都查得到。')}},{l:'C. 发给李贤在：口红约会怎么样？',a:function(){d3a_s('hj','口红约会怎么样？')}}]);}
+function d3a_s(to,msg){G.meTo[3]=to;sV('匿名短信','DAY 3 · 深夜');
+  if(to==='jy')cA('jy',5);else if(to==='jb')cA('jb',5);else cA('hj',5);
+  sb(msg,'her');sn_('发送成功。你把手机翻了个面，扣在枕边。<br><br>看来他是铁了心不想复合。虽然难过，但我也不是舔狗。他不主动，我就放下。');
+  aPop(gC(),function(){tCheck();sa([{l:'DAY 3 结束 · DAY 4 即将到来',a:function(){DT(4,cSoon);},p:true}]);});}
+
+function d3c(){
+  CP("✦ 晨间镜头 ✦",[
+    "你下楼时，金泳勋正在客厅整理昨晚的垃圾。<br>看见你，他微笑了一下：“李贞——昨晚睡得好吗？”<br>你言不由衷地点点头。<br>他却笑得更温柔，指了指你眼下有青黑。<br><br>你啊的一声，跑去化妆间补遮瑕。",
+    "再下楼，裴俊英正好从厨房出来，端着两杯咖啡。他把其中一杯放在桌上，却给了编剧女B。<br>“谢谢Jacob欧巴~”她笑得很甜，可那种幸福刺痛了你。<br>曾经你也是安心被他照顾的那个。<br><br>李贤在从健身房出来，额前的湿发有些自来卷。<br>他拍了拍尴尬立在客厅的你，“走，今天欧巴带你出去吃。”",
+    "出门时，节目组叫住了你们：现在公布职业。<br><br>“我给点提示，”女C晃着咖啡杯，“要握刀子哦。”<br>Eric举手：“医生！”<br><br>裴俊英沉默了一下：“……我在一栋楼里，每天和很多人开会。”<br>“公务员？”金泳勋猜测。裴俊英摇头，“在三星工作。”<br><br>接下来，你发现李贤在居然是退役特种部队成员，曾获得总统特别表彰。<br>金泳勋则是高级商务翻译官，精通韩英西班牙三语。<br>至于Eric的职业，你早已知道——他是职业足球运动员，你曾去过他的主队比赛表演。"
+  ],d3c_gp);}
+function d3c_gp(){d3c_g();}
+function d3c_h(t){d3c_g();}
+function d3c_g(){
+  C_("““✦ 1对1 · 健身房 ✦””","下午，你去了健身房，李贤在背对着门正在举铁。<br>他的黑色背心被汗浸透，勾勒出有型的肌肉线条。<br><br>李贤在从镜子看见了你，他放下杠铃，转身。<br>“来看英雄举铁？”<br><br>你发现李贤在总有办法让你又无语又好笑。",null,[{l:"A. 不理他。",a:"d3c_gr('av')"},{l:"B. 挑衅他，没看到英雄啊。",a:"d3c_gr('ho')"},{l:"C. 调戏他，看来英雄大的不只气量哦",a:"d3c_gr('op')"}]);}
+function d3c_gr(t){
+  if(t==='op'){cA('hj',10);R_('💪','欧巴，其实我也每天健身的。李贤在的瞳孔缩了一下。<br><br>明天会见到你吗？你问——然后转身，没等他回答。<br><br>李贤在站在原地。汗水滴进眼睛里，他抬手擦了一把，嘴角却往上扯。<em>她在约我。</em>用最轻的话下最重的钩。',d3c_er);}
+  else if(t==='ho'){cA('hj',5);R_('💬','我不知道回什么。<br><br>他愣了一下。然后笑——不是挑衅的笑，是某种被诚实打动的笑。<br><br>那就别回。他说，明天七点。你来，或者不来。我都在这。',d3c_er);}
+  else{R_('🚪','你沉默，低头看地板。他等了你很久——然后退后一步。<br><br>那就当我没问。他转身回去举铁。杠铃砸在地上的声音比之前重。',d3c_er);}
+}
+function d3c_gr(t){
+  var txt="";
+  if(t==="op"){cA("hj",10);txt="李贤在还没来得及回应，健身房外传来脚步声。<br>Eric的声音由远及近：“李贞？你一会——”<br>他停在走廊拐角，看见你和李贤在的距离，声音卡住了。<br><br>他眼睛看着你，像只被主人遗忘在门外的狗。";}
+  else if(t==="ho"){cA("hj",5);txt="李贤在还没来得及回应，健身房外传来脚步声。<br>Eric的声音由远及近：“李贞？你一会——”<br>他停在走廊拐角，看见你和李贤在的距离，声音卡住了。<br><br>他眼睛看着你，像只被主人遗忘在门外的狗。";}
+  else{txt="李贤在还没来得及回应，健身房外传来脚步声。<br>Eric的声音由远及近：“李贞？你一会——”<br>他停在走廊拐角，看见你和李贤在的距离，声音卡住了。<br><br>他眼睛看着你，像只被主人遗忘在门外的狗。";}
+  C_("““✦ 走廊 · Eric ✦””",txt,null,[
+    {l:"A. 笑笑，从他身边走过，回房间。",a:"d3c_er_pick('av')"},
+    {l:"B. 问他怎么了，有事吗？",a:"d3c_er_pick('ho')"},
+    {l:"C. 早就想说了，之后你比赛记得邀请我去加油啊！",a:"d3c_er_pick('op')"}
+  ]);}
+
+function d3c_er_pick(t){
+  var txt="";
+  var ic="";
+  if(t==="ho"){cA("er",3);txt="你走上前轻轻拍了拍他肩膀，“怎么了，有事吗？”<br><br>Eric眼睛弯成月牙，没事儿！我就想问问你要不要去玩飞盘。<br>你点点头，他转身跑走，背影雀跃得像只终于得到抚摸的金毛。";ic="🐱";}
+  else if(t==="op"){cA("er",8);txt="Eric愣了一秒，“没问题，包在我身上！”<br>他看着你认真说，“幸运女神如果来，我肯定会赢的。”<br><br>他的眼神让你终于明白啦啦队存在的意义。";ic="⚽";}
+  else{txt="你从他身边走过。他的手指失落地从紧攥的衣角松开。<br><br>走廊里只剩下Eric一个人，李贤在转过身继续举铁。";ic="🚶";}
+  if(ic)R_(ic,txt,d3c_rk);
+  else R_("🚶",txt,d3c_rk);
+}
+function d3c_rk(){
+  C_("““✦ 心动排名 ✦””","节目组通知：第二轮心动排名。你捏着笔，盯着卡片。<br><br>你没注意到，刚刚金泳勋站在楼梯口，手里是助眠的牛奶和芳香精油。<br>他看见了全部。<br>你去健身房找李贤在，而Eric来找你。<br><br>他转身上楼，轻轻把东西放在你房间门口。",function(){NT(d3c_sms);});}
+function d3c_sms(){sV("匿名短信","DAY 3 · 深夜");ss("““✦ 你必须发出一条短信 ✦””");sb("英雄会保护你的","him");sb("李贞李贞李贞","him");sb("让我多了解你一点吧","him");ss("— 你收到了 3 条 —");G.exTo[3]="女NPC B";sr_("““✦ 前任报告 ✦<br>你的前任（裴俊英）今晚将短信发给了<br><b>女NPC B</b>””");sa([{l:"A. 发给裴俊英：我累了。",a:function(){d3c_s("jb","我累了。")}},{l:"B. 发给李贤在：还练吗？",a:function(){d3c_s("hj","还练吗？")}},{l:"C. 发给Eric：🦮",a:function(){d3c_s("er","🦮")}},{l:"D. 发给金泳勋：和你约会是什么样的呢？",a:function(){d3c_s("yh","和你约会是什么样的呢？")}}]);}
+function d3c_s(to,msg){G.meTo[3]=to;sV("匿名短信","DAY 3 · 深夜");
+  if(to==="jb")cA("jb",8);else if(to==="hj")cA("hj",8);else cA("er",8);
+  sb(msg,"her");sn_("发送成功。<br><br>你往香薰机里滴了几滴精油，那是今天有人放在你门口的。");
+  aPop(gC(),function(){tCheck();sa([{l:"DAY 3 结束 · 进入 DAY 4",a:function(){DT(4,cSoon);},p:true}]);});}
+
+function cSoon(){
+  V('<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:30px;text-align:center"><div style="font-size:40px;margin-bottom:16px">🏠</div><div style="font-size:14px;color:#d8ccb8;letter-spacing:3px;font-weight:300;margin-bottom:8px">THE B HOUSE</div><div style="font-size:10px;color:rgba(255,255,255,0.15);letter-spacing:2px;margin-bottom:20px">DEMO · DAY 1-3</div><div style="font-size:11px;color:rgba(255,255,255,0.3);line-height:2;max-width:280px">空姐线 DAY1-3 · 啦啦队线 DAY1-3<br>全部实装完成<br><br>—— 敬请期待 ——</div><span class="btn primary" style="margin-top:20px" onclick="showRules()">重新开始</span><span class="btn" style="margin-top:8px" onclick="showIdSelect()">换身份</span></div>');
+}
+
+showRules();
+</script>
+</body>
+</html>
